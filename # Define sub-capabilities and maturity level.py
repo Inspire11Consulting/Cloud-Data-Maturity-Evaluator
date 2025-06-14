@@ -1,5 +1,74 @@
+# Define four sub-capabilities per category, each with 5 levels of maturity
+maturity_subitems = {
+    "Cloud Architecture": {
+        "Infra Modernization": {
+            1: "Mostly on-premises, limited virtualization",
+            2: "Initial cloud migration (IaaS)",
+            3: "Landing zone setup, basic PaaS",
+            4: "Hybrid cloud, containerization",
+            5: "Cloud-native, serverless, autoscaling"
+        },
+        "Cloud Ops & DevSecOps": {
+            1: "Manual deployment, no CI/CD",
+            2: "Scripted deployments, basic automation",
+            3: "CI/CD pipelines, IaC introduced",
+            4: "DevSecOps practices integrated",
+            5: "Full GitOps, policy-as-code, drift remediation"
+        },
+        "Scalability & Resilience": {
+            1: "Single instance, manual scaling",
+            2: "Basic autoscale groups",
+            3: "Load balanced services",
+            4: "Multi-region failover",
+            5: "Self-healing distributed architecture"
+        },
+        "Cost Optimization": {
+            1: "No cost visibility",
+            2: "Manual cost tracking",
+            3: "Budgets and tags used",
+            4: "Automated cost governance",
+            5: "Continuous cost optimization (FinOps)"
+        }
+    },
+    "Data Management": {
+        "Ingestion & Integration": {
+            1: "Manual Excel uploads",
+            2: "Flat file imports, no scheduling",
+            3: "Scheduled ETL/ELT pipelines",
+            4: "Streaming ingestion + CDC",
+            5: "Event-driven ingestion with automation"
+        },
+        "Storage Architecture": {
+            1: "On-prem DBs & file shares",
+            2: "Cloud blob storage or SQL DW",
+            3: "Lakehouse architecture adopted",
+            4: "Multi-zone, governed layers",
+            5: "Federated data mesh with catalog"
+        },
+        "Metadata & Cataloging": {
+            1: "No catalog or glossary",
+            2: "Excel-based definitions",
+            3: "Automated scanning (Purview pilot)",
+            4: "Role-based catalog and lineage",
+            5: "Fully automated cataloging and policies"
+        },
+        "Data Quality & Stewardship": {
+            1: "No defined data quality checks",
+            2: "Manual DQ in Excel/SQL",
+            3: "Rules implemented in pipelines",
+            4: "DQ dashboards and scorecards",
+            5: "Proactive DQ alerts and steward accountability"
+        }
+    }
+    # Other categories (Analytics, AI/ML Integration, etc.) will be added similarly
+}
+
+maturity_subitems.keys()
+
+
 # Define sub-capabilities and maturity levels for all six categories
 maturity_subitems.update({
+    
     "Analytics": {
         "Reporting Maturity": {
             1: "Manual reports in Excel",
