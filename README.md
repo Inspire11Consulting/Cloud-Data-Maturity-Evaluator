@@ -15,9 +15,10 @@
     
 ### Future Features I:
     * Endhance Maturity Model Details and Display in sliders
+    * High priority key word insert textbox for each area and sub-area
     * HeatMap - 4 squres cubs for each areas
     * Daigarm of 18 Months Roadmap
-    * PPT Creation with Recommendations and Download 
+    * [OPTIONAL] Polygon Radar Spider Chart for AS IS and TO BE
 
 ### Future Features II:
      * PPT Creation with Recommendations and Roadmap
