@@ -5,6 +5,13 @@
     * OpenAI Evaluation
     * Recommendations For Areas
     * High Level 18 Months Plan
+
+### Development Environment:
+    * Python + Streamlit
+    * VS Code
+
+### Execution:
+    * streamlit run MaturityLevelEvaluation+AI3+Sample.py  
     
 ### Future Features I:
     * Endhance Maturity Model Details and Display in sliders
@@ -21,12 +28,5 @@
      * List Out avaliable Leveraging Area
      * List Out Most Commom Team Structure Based On Past Project
 
-
-### Development Environment:
-    * Python + Streamlit
-    * VS Code
-
-### Execution:
-    * streamlit run MaturityLevelEvaluation+AI3+Sample.py
 
     
