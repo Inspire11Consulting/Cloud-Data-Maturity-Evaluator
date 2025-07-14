@@ -21,4 +21,12 @@
      * List Out avaliable Leveraging Area
      * List Out Most Commom Team Structure Based On Past Project
 
+
+### Development Environment:
+    * Python + Streamlit
+    * VS Code
+
+### Execution:
+    * streamlit run MaturityLevelEvaluation+AI3+Sample.py
+
     
