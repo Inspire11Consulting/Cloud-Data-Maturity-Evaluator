@@ -14,34 +14,10 @@ client = OpenAI(api_key=api_key)
 
 # ---- Custom CSS for professional blue theme ----
 st.markdown("""
-<style>
-    /* Slider track styling - blue theme */
-    .stSlider > div > div > div > div {
-        color: white;
-        #background-color: #FFFFFF !important;  
-    }
-    
-    /* Slider thumb styling - blue theme */
-    .stSlider > div > div > div > div > div {
-        background-color: #1976d2 !important;
-        border: 2px solid #0d47a1 !important;
-    }
-    
-    /* Remove blue highlight from slider labels */
-    .stSlider > div > div > div > div > div > div {
-        color: #FFFFFF !important;
-        background-color: none !important;
-        border: none !important;
-    }
-    
-    /* Slider value display styling */
-    .stSlider > div > div > div {
-        color: #42a5f5 !important;
-    }
-    
+<style>    
     /* Text area styling */
     .stTextArea > div > div > textarea {
-        color: #FFFFFF !important;  
+        color: #000000 !important;  
         border: none !important;      
         #border: 2px solid #2196f3;
         #border-radius: 5px;
@@ -58,10 +34,10 @@ st.markdown("""
         font-weight: bold;
     }
     
-    /* Button styling - white theme */
+    /* Button styling - blue theme */
     .stButton > button {
-        background-color: white !important;
-        color: #1976d2 !important;
+        background-color: #1976d2 !important;
+        color: #FFFFFF !important;
         border: 2px solid #1976d2 !important;
         border-radius: 5px !important;
         font-weight: bold !important;
@@ -78,11 +54,6 @@ st.markdown("""
         background-color: #e0e0e0 !important;
     }
     
-    /* Remove slider tick labels blue highlighting */
-    .stSlider label {
-        color: #42a5f5 !important;
-        background: transparent !important;
-    }
     
     /* Caption styling for maturity level labels */
     .stCaption {
