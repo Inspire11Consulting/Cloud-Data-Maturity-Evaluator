@@ -10,7 +10,7 @@ import re
 st.set_page_config(page_title="Cloud & AI Maturity")
 
 # ---- Set your OpenAI key ----
-api_key = "sk-"  # Replace with your actual API key
+api_key = "sk-APIKey"  # Replace with your actual API key
 client = OpenAI(api_key=api_key)
 
 # ---- Custom CSS for professional blue theme ----
