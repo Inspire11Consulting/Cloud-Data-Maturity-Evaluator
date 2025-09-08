@@ -457,4 +457,3 @@ if st.button("Generate AI-Powered Strategic Assessment", type="primary"):
 
 # ---- Footer ----
 st.markdown("---")
-st.markdown("*This assessment provides strategic insights for cloud and data transformation. Technical assessments typically show the greatest business value when aligned with organizational capabilities and industry-specific requirements.*")
