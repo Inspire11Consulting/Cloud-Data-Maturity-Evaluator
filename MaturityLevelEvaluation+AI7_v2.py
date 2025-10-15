@@ -11,6 +11,10 @@ from io import BytesIO
 from openai import OpenAI
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # ---- App Configuration ----------------------
 st.set_page_config(page_title="Cloud & AI Maturity Evaluator", layout="wide")
@@ -18,7 +22,11 @@ st.title("Cloud & Data Maturity Evaluator")
 st.markdown("Assess maturity, generate executive & technical guidance, and produce baseball-card project summaries and a consolidated roadmap.")
 
 # ---- Set your OpenAI key --------------------
-api_key = "sk-"  # Replace with your actual API key
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    st.error("⚠️ OpenAI API key not found! Please create a .env file with your OPENAI_API_KEY. See .env_template for reference.")
+    st.stop()
+
 client = OpenAI(api_key=api_key)
 
 # -------------------- CSS --------------------
