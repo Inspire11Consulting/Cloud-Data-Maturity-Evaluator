@@ -2,8 +2,20 @@
 OpenAI API integration and client setup.
 """
 
+import os
 from openai import OpenAI
-from ai_gen.config import OPENAI_API_KEY, OPENAI_MODEL, OPENAI_DEFAULT_TEMPERATURE, OPENAI_DEFAULT_MAX_TOKENS
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# OpenAI API Configuration
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# OpenAI Model Configuration
+OPENAI_MODEL = "gpt-3.5-turbo"
+OPENAI_DEFAULT_TEMPERATURE = 0.4
+OPENAI_DEFAULT_MAX_TOKENS = 1000
 
 
 class OpenAIClient:

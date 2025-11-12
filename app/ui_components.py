@@ -5,14 +5,33 @@ UI components for Streamlit app: sidebar, sliders, displays, baseball cards.
 import streamlit as st
 import numpy as np
 from typing import Dict
-from app.config import (
-    MATURITY_LEVELS,
-    CATEGORIES_STRUCTURE,
-    STREAMLIT_CSS,
-    INDUSTRY_OPTIONS,
-    SEED_SCENARIO_TEXT
-)
 from ai_gen.data_normalizer import get_field
+
+# Maturity Levels
+MATURITY_LEVELS = {
+    1: "Greenfield",
+    2: "Emerging",
+    3: "Developing",
+    4: "Established",
+    5: "Optimized"
+}
+
+# Default Industry Options
+INDUSTRY_OPTIONS = [
+    "Homebuilding & Real Estate",
+    "Healthcare",
+    "Manufacturing",
+    "Financial Services",
+    "Logistics",
+    "Retail",
+    "Food and Beverage"
+]
+
+# Seed Scenario Text
+SEED_SCENARIO_TEXT = (
+    "The client is a manufacturer and distributor of charitable gaming products. "
+    "They operate three business units with silos, ~10 ERPs, no consolidated data, and many long-tenured staff resistant to change."
+)
 
 
 def render_sidebar():

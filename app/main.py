@@ -5,15 +5,100 @@ Orchestrates UI components, business logic, AI generation, and exports.
 
 import streamlit as st
 import json
-from app.config import (
-    APP_PAGE_TITLE,
-    APP_TITLE,
-    APP_DESCRIPTION,
-    STREAMLIT_CSS,
-    CATEGORIES_STRUCTURE,
-    MATURITY_LEVELS
-)
-from ai_gen.config import OPENAI_API_KEY
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# App Configuration
+APP_PAGE_TITLE = "Cloud & AI Maturity Evaluator"
+APP_TITLE = "Cloud & Data Maturity Evaluator"
+APP_DESCRIPTION = "Assess maturity, generate executive & technical guidance, and produce baseball-card project summaries and a consolidated roadmap."
+
+# Streamlit Styling
+STREAMLIT_CSS = """
+<style>
+  .category-header { background: linear-gradient(90deg,#1976d2,#42a5f5); color:white; padding:6px; border-radius:6px; font-weight:700; margin-bottom:6px; }
+  div.stButton > button, div.stDownloadButton > button {
+    background-color: #1976d2 !important;
+    color: white !important;
+    border-radius: 6px !important;
+    padding: 8px 14px !important;
+    font-weight: 600 !important;
+  }
+  div.stButton > button:hover, div.stDownloadButton > button:hover {
+    background-color: #1565c0 !important;
+    color: white !important;
+  }
+</style>
+"""
+
+# Categories Structure
+CATEGORIES_STRUCTURE = {
+    "Cloud Architecture": [
+        "Infrastructure Design",
+        "Scalability & Performance",
+        "Multi-cloud Strategy",
+        "Cost Optimization",
+        "Disaster Recovery",
+        "Service Architecture"
+    ],
+    "Data Management": [
+        "Data Quality",
+        "Data Integration",
+        "Master Data Management",
+        "Data Lifecycle",
+        "Data Storage Strategy",
+        "Real-time Processing"
+    ],
+    "Data Visualization & Insights": [
+        "Dashboard Design",
+        "Data Storytelling",
+        "Interactive Visualizations",
+        "Advanced Analytics Techniques",
+        "Self-Service Analytics",
+        "Insight Communication"
+    ],
+    "AI/ML Integration": [
+        "Model Development",
+        "MLOps & Deployment",
+        "AI Ethics & Bias",
+        "Business Integration",
+        "AutoML Capabilities",
+        "AI Governance"
+    ],
+    "Governance & Security": [
+        "Data Privacy",
+        "Compliance Management",
+        "Access Controls",
+        "Risk Management",
+        "Audit & Monitoring",
+        "Policy Enforcement"
+    ],
+    "Business Engagement": [
+        "Stakeholder Alignment",
+        "Change Management",
+        "Skills & Training",
+        "Value Measurement",
+        "Business Process Integration",
+        "Strategic Planning"
+    ]
+}
+
+# Maturity Levels
+MATURITY_LEVELS = {
+    1: "Greenfield",
+    2: "Emerging",
+    3: "Developing",
+    4: "Established",
+    5: "Optimized"
+}
+
+# OpenAI API Configuration
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Imports
 from app import ui_components, business_logic, visualization, export
 from ai_gen.openai_client import OpenAIClient
 from ai_gen.prompts import build_category_assessment_prompt, build_consolidation_prompt
