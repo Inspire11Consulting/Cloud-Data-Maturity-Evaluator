@@ -1,13 +1,12 @@
 # Cloud-Data-Maturity-Evaluator
 
-A comprehensive Streamlit application for assessing organizational cloud and data maturity levels, generating AI-powered recommendations, and creating detailed roadmaps for digital transformation.
+A **React + Python API** application for assessing organizational Cloud, Data, and AI maturity, generating AI-powered recommendations, and producing a consolidated roadmap with PowerPoint export.
 
 ## 🚀 Features
 
 ### Core Assessment Capabilities
-- **Interactive Maturity Sliders** - Rate 6 key capability areas on a 1-5 scale (Greenfield to Optimized)
+- **Interactive Maturity Sliders** - Rate sub-capabilities on a 1-5 scale (Greenfield to Optimized)
 - **Detailed Sub-Capabilities** - 36 specific sub-areas across all categories
-- **Visual Heatmap** - Color-coded maturity visualization
 - **Company Context Input** - Industry, size, IT department, and priority projects
 
 ### AI-Powered Insights
@@ -23,7 +22,8 @@ A comprehensive Streamlit application for assessing organizational cloud and dat
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: Streamlit (Python web framework)
+- **Frontend**: React + Vite (`DA-SaaS-Portal-Dashboard/`)
+- **Backend**: FastAPI (`backend/api.py`)
 - **Data Processing**: Pandas, NumPy
 - **Visualization**: Matplotlib, Seaborn
 - **AI Integration**: OpenAI GPT-3.5-turbo
@@ -58,19 +58,28 @@ A comprehensive Streamlit application for assessing organizational cloud and dat
    OPENAI_API_KEY=sk-your-actual-openai-api-key-here
    ```
 
-## 🚀 Running the Application
+## 🚀 Running the Application (Backend + Frontend)
 
-### Advanced Version (Recommended)
+### 1) Start the backend API
+From the repo root:
+
 ```bash
-python -m streamlit run "MaturityLevelEvaluation+AI7_v2.py"
+python -m uvicorn backend.api:app --reload --port 8000
 ```
 
-### Basic Version
+Health check: `http://127.0.0.1:8000/health`  
+API schema: `http://127.0.0.1:8000/api/schema`
+
+### 2) Start the React frontend
+In a separate terminal:
+
 ```bash
-python -m streamlit run MaturityLevelEvaluation.py
+cd DA-SaaS-Portal-Dashboard
+npm install
+npm run dev
 ```
 
-The application will start and be available at `http://localhost:8501`
+The frontend runs on `http://localhost:3000` and proxies `/api/*` requests to the backend.
 
 ## 📊 Maturity Assessment Categories
 
@@ -134,8 +143,9 @@ The application will start and be available at `http://localhost:8501`
 
 ```
 Cloud-Data-Maturity-Evaluator/
-├── MaturityLevelEvaluation.py              # Basic version
-├── MaturityLevelEvaluation+AI7_v2.py      # Advanced AI-powered version
+├── backend/api.py                          # FastAPI backend
+├── app/                                    # Reusable maturity logic (non-UI)
+├── ai_gen/                                 # OpenAI prompts + parsing/normalization
 ├── requirements.txt                        # Python dependencies
 ├── .env_template                          # Environment variables template
 ├── .gitignore                             # Git ignore rules

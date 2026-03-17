@@ -1,15 +1,19 @@
 """
-Simple entry point for Cloud & Data Maturity Evaluator.
-Imports and runs the Streamlit application.
+Convenience entry point for the Data & AI Maturity Tool backend API.
 
-Run with: streamlit run main.py
+Recommended dev command:
+  python -m uvicorn backend.api:app --reload --port 8000
 """
 
-# Import and run the Streamlit app
-# Streamlit will execute this file, so we import the app module which runs on import
-from app import main
+from __future__ import annotations
 
-# The run_app() function is called when the module is imported
-# This ensures the app runs when Streamlit executes this file
-main.run_app()
+import uvicorn
+
+
+def main() -> None:
+    uvicorn.run("backend.api:app", host="127.0.0.1", port=8000, reload=True)
+
+
+if __name__ == "__main__":
+    main()
 
