@@ -1,17 +1,16 @@
 # Cloud-Data-Maturity-Evaluator
 
-A comprehensive Streamlit application for assessing organizational cloud and data maturity levels, generating AI-powered recommendations, and creating detailed roadmaps for digital transformation.
+A **React + Python API** application for assessing organizational Cloud, Data, and AI maturity, generating AI-powered recommendations, and producing a consolidated roadmap with PowerPoint export.
 
 ## 🚀 Features
 
 ### Core Assessment Capabilities
-- **Interactive Maturity Sliders** - Rate 6 key capability areas on a 1-5 scale (Greenfield to Optimized)
+- **Interactive Maturity Sliders** - Rate sub-capabilities on a 1-5 scale (Greenfield to Optimized)
 - **Detailed Sub-Capabilities** - 36 specific sub-areas across all categories
-- **Visual Heatmap** - Color-coded maturity visualization
 - **Company Context Input** - Industry, size, IT department, and priority projects
 
 ### AI-Powered Insights
-- **OpenAI Integration** - Generate executive and technical recommendations
+- **Anthropic Integration** - Generate executive and technical recommendations
 - **Baseball Cards** - Structured project summaries for each capability area
 - **8-Week Sprint Roadmap** - Detailed short-term implementation plan
 - **3-Year Strategic Roadmap** - Long-term transformation vision
@@ -23,17 +22,18 @@ A comprehensive Streamlit application for assessing organizational cloud and dat
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: Streamlit (Python web framework)
+- **Frontend**: React + Vite (`DA-SaaS-Portal-Dashboard/`)
+- **Backend**: FastAPI (`backend/api.py`)
 - **Data Processing**: Pandas, NumPy
 - **Visualization**: Matplotlib, Seaborn
-- **AI Integration**: OpenAI GPT-3.5-turbo
+- **AI Integration**: Anthropic Claude (default: `claude-3-5-haiku-latest`)
 - **Export**: python-pptx for PowerPoint generation
 - **Environment**: python-dotenv for secure API key management
 
 ## 📋 Prerequisites
 
 - Python 3.8 or higher
-- OpenAI API key
+- Anthropic API key
 - Internet connection for AI features
 
 ## 🔧 Installation & Setup
@@ -54,23 +54,32 @@ A comprehensive Streamlit application for assessing organizational cloud and dat
    # Copy the template
    cp .env_template .env
    
-   # Edit .env and add your OpenAI API key
-   OPENAI_API_KEY=sk-your-actual-openai-api-key-here
+   # Edit .env and add your Anthropic API key
+   ANTHROPIC_API_KEY=your-anthropic-api-key-here
    ```
 
-## 🚀 Running the Application
+## 🚀 Running the Application (Backend + Frontend)
 
-### Advanced Version (Recommended)
+### 1) Start the backend API
+From the repo root:
+
 ```bash
-python -m streamlit run "MaturityLevelEvaluation+AI7_v2.py"
+python -m uvicorn backend.api:app --reload --port 8000
 ```
 
-### Basic Version
+Health check: `http://127.0.0.1:8000/health`  
+API schema: `http://127.0.0.1:8000/api/schema`
+
+### 2) Start the React frontend
+In a separate terminal:
+
 ```bash
-python -m streamlit run MaturityLevelEvaluation.py
+cd DA-SaaS-Portal-Dashboard
+npm install
+npm run dev
 ```
 
-The application will start and be available at `http://localhost:8501`
+The frontend runs on `http://localhost:3000` and proxies `/api/*` requests to the backend.
 
 ## 📊 Maturity Assessment Categories
 
@@ -134,8 +143,9 @@ The application will start and be available at `http://localhost:8501`
 
 ```
 Cloud-Data-Maturity-Evaluator/
-├── MaturityLevelEvaluation.py              # Basic version
-├── MaturityLevelEvaluation+AI7_v2.py      # Advanced AI-powered version
+├── backend/api.py                          # FastAPI backend
+├── app/                                    # Reusable maturity logic (non-UI)
+├── ai_gen/                                 # AI prompts + client + parsing/normalization
 ├── requirements.txt                        # Python dependencies
 ├── .env_template                          # Environment variables template
 ├── .gitignore                             # Git ignore rules
@@ -188,8 +198,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 python -m streamlit run "MaturityLevelEvaluation+AI7_v2.py"
 ```
 
-**"OpenAI API key not found"**
-- Ensure `.env` file exists with valid `OPENAI_API_KEY`
+**"Anthropic API key not found"**
+- Ensure `.env` file exists with valid `ANTHROPIC_API_KEY`
 - Check `.env_template` for reference format
 
 **App won't start**
