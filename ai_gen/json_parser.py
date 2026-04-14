@@ -6,6 +6,39 @@ import json
 import re
 
 
+def _extract_balanced_json_object(text):
+    """Extract the first balanced top-level JSON object from text."""
+    start = text.find("{")
+    if start == -1:
+        return None
+
+    depth = 0
+    in_string = False
+    escape = False
+    for idx in range(start, len(text)):
+        ch = text[idx]
+
+        if escape:
+            escape = False
+            continue
+        if ch == "\\":
+            escape = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start : idx + 1]
+    return None
+
+
 def try_load_json(text):
     """
     Robust JSON loader with several fallbacks.
@@ -22,7 +55,7 @@ def try_load_json(text):
     """
     if text is None:
         raise ValueError("No text provided")
-    t = str(text).strip()
+    t = str(text).strip().lstrip("\ufeff")
 
     # If code fence present, extract inner content
     fence = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", t, re.IGNORECASE)
@@ -57,6 +90,17 @@ def try_load_json(text):
             return json.loads(candidate)
         except Exception:
             # last-ditch: replace single quotes in candidate
+            try:
+                return json.loads(candidate.replace("'", '"'))
+            except Exception:
+                pass
+
+    # Extract first balanced JSON object (safer than greedy rfind)
+    candidate = _extract_balanced_json_object(t)
+    if candidate:
+        try:
+            return json.loads(candidate)
+        except Exception:
             try:
                 return json.loads(candidate.replace("'", '"'))
             except Exception:

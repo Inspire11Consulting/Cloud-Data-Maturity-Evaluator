@@ -13,7 +13,9 @@ load_dotenv()
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # Anthropic Model Configuration
-ANTHROPIC_MODEL = "claude-opus-4-6"
+# Keep model configurable via env so different Anthropic accounts can use
+# whichever model they have access to.
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
 ANTHROPIC_DEFAULT_TEMPERATURE = 0.4
 ANTHROPIC_DEFAULT_MAX_TOKENS = 1000
 

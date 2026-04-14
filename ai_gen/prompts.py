@@ -30,6 +30,17 @@ Make sure:
 - All lists are JSON arrays.
 - Keep entries concise.
 - Use the inputs below for context.
+- Keep output compact to avoid truncation:
+  - `executive.activities`: max 5 items
+  - `executive.focus_8w`: exactly 4 items
+  - `executive.plan_3y`: exactly 3 items
+  - `executive.assumptions`: max 3 items
+  - `technical.activities`: max 5 items
+  - `technical.focus_8w`: exactly 4 items
+  - `technical.plan_3y`: exactly 3 items
+  - `technical.assumptions`: max 3 items
+  - `technical.team`: max 5 items
+- Each list item should be one short sentence.
 """
 
 CONSOLIDATION_SCHEMA = """
@@ -106,6 +117,7 @@ Overall context: {overall_context if overall_context else 'None'}
 Seed scenario: {seed_scenario_text if seed_scenario_text else 'None'}
 
 Return the JSON only, exactly matching the schema at the top.
+Do not include markdown fences or commentary.
 """
     return prompt
 
@@ -130,4 +142,25 @@ Category fragments:
 Distribute initiatives sensibly across sprints and years. Return JSON only.
 """
     return prompt
+
+
+def build_json_repair_prompt(raw_text):
+    """
+    Build a prompt that converts model output into strict JSON only.
+
+    Args:
+        raw_text: Potentially malformed JSON-like output
+
+    Returns:
+        str: Prompt instructing the model to return valid JSON only
+    """
+    return f"""
+You are a JSON repair assistant.
+Convert the input below into valid JSON.
+Return ONLY valid JSON (no markdown, no explanation).
+Preserve all original keys and values where possible.
+
+Input:
+{raw_text}
+"""
 

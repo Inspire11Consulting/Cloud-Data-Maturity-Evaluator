@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
 from typing import Any
 
@@ -11,7 +12,11 @@ from pydantic import BaseModel, Field
 from ai_gen.data_normalizer import get_field, normalize_baseball_card
 from ai_gen.json_parser import try_load_json
 from ai_gen.ai_client import AIClient
-from ai_gen.prompts import build_category_assessment_prompt, build_consolidation_prompt
+from ai_gen.prompts import (
+    build_category_assessment_prompt,
+    build_consolidation_prompt,
+    build_json_repair_prompt,
+)
 from app import business_logic, export, visualization
 from app.schema import CATEGORIES_STRUCTURE, MATURITY_LEVELS
 
@@ -65,6 +70,18 @@ class ExportPptxRequest(BaseModel):
     recommendation_data: list[dict[str, Any]] = Field(default_factory=list)
 
 
+def _parse_with_repair(client: AIClient, raw: str, max_tokens: int = 1200):
+    """
+    Parse AI JSON output; if parsing fails, ask the model to repair JSON once.
+    """
+    try:
+        return try_load_json(raw), raw
+    except ValueError:
+        repair_prompt = build_json_repair_prompt(raw)
+        repaired_raw = client.call_ai(repair_prompt, max_tokens=max_tokens, temperature=0.0)
+        return try_load_json(repaired_raw), repaired_raw
+
+
 @app.get("/api/schema")
 def get_schema():
     return {
@@ -76,11 +93,6 @@ def get_schema():
 
 @app.post("/api/assess")
 def assess(req: AssessRequest):
-    try:
-        client = AIClient()
-    except RuntimeError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
     # Convert pydantic models to plain dicts
     all_scores = {k: v.model_dump() for k, v in req.all_scores.items()}
 
@@ -94,11 +106,8 @@ def assess(req: AssessRequest):
             "consolidated": None,
         }
 
-    recommendation_data: list[dict[str, Any]] = []
-    category_fragments: list[dict[str, Any]] = []
-    raw_ai_outputs: dict[str, str] = {}
-
-    for category in categories_to_process:
+    def process_category(category: str):
+        client = AIClient()
         include_flag = req.category_inclusion.get(category, False)
         comment_text = (req.category_comments.get(category) or "").strip()
         scores = all_scores.get(category, {}) or {}
@@ -121,22 +130,11 @@ def assess(req: AssessRequest):
             seed_scenario_text=req.seed_scenario_text,
         )
 
+        raw = ""
         try:
-            raw = client.call_ai(prompt, max_tokens=1000, temperature=0.4)
-            raw_ai_outputs[category] = raw
-            parsed = try_load_json(raw)
+            raw = client.call_ai(prompt, max_tokens=1600, temperature=0.1)
+            parsed, raw_used = _parse_with_repair(client, raw)
             normalized = normalize_baseball_card(parsed)
-
-            recommendation_data.append(
-                {
-                    "category": category,
-                    "raw": raw,
-                    "parsed": parsed,
-                    "data_normalized": normalized,
-                    "show_avg": include_flag,
-                    "avg": avg if include_flag else None,
-                }
-            )
 
             exec_block = normalized.get("executive", {}) or {}
             exec_focus = get_field(exec_block, "focus_8w") or []
@@ -146,21 +144,48 @@ def assess(req: AssessRequest):
             if isinstance(exec_plan3, str):
                 exec_plan3 = [exec_plan3]
 
-            category_fragments.append(
-                {"category": category, "focus_8w": exec_focus, "plan_3y": exec_plan3}
-            )
-        except Exception as e:
-            # Keep going for other categories; return details for troubleshooting.
-            recommendation_data.append(
-                {
+            return {
+                "category": category,
+                "raw_ai_output": raw_used,
+                "recommendation": {
                     "category": category,
-                    "raw": raw_ai_outputs.get(category, ""),
+                    "raw": raw_used,
+                    "parsed": parsed,
+                    "data_normalized": normalized,
+                    "show_avg": include_flag,
+                    "avg": avg if include_flag else None,
+                },
+                "fragment": {"category": category, "focus_8w": exec_focus, "plan_3y": exec_plan3},
+            }
+        except Exception as e:
+            return {
+                "category": category,
+                "raw_ai_output": raw,
+                "recommendation": {
+                    "category": category,
+                    "raw": raw,
                     "error": str(e),
                     "data_normalized": {"executive": {}, "technical": {}},
                     "show_avg": include_flag,
                     "avg": avg if include_flag else None,
-                }
-            )
+                },
+                "fragment": None,
+            }
+
+    # Run category calls concurrently to reduce UI wait time.
+    max_workers = min(3, len(categories_to_process))
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        results = list(executor.map(process_category, categories_to_process))
+
+    recommendation_data: list[dict[str, Any]] = []
+    category_fragments: list[dict[str, Any]] = []
+    raw_ai_outputs: dict[str, str] = {}
+    for item in results:
+        recommendation_data.append(item["recommendation"])
+        if item["fragment"]:
+            category_fragments.append(item["fragment"])
+        if item["raw_ai_output"]:
+            raw_ai_outputs[item["category"]] = item["raw_ai_output"]
 
     return {
         "recommendation_data": recommendation_data,
@@ -180,8 +205,8 @@ def consolidate(req: ConsolidateRequest):
     prompt = build_consolidation_prompt(fragments)
 
     try:
-        raw = client.call_ai(prompt, max_tokens=800, temperature=0.4)
-        consolidated = try_load_json(raw)
+        raw = client.call_ai(prompt, max_tokens=1200, temperature=0.1)
+        consolidated, _ = _parse_with_repair(client, raw)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Consolidation failed: {e}")
 
