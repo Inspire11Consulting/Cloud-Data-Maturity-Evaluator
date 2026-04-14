@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 from ai_gen.data_normalizer import get_field, normalize_baseball_card
 from ai_gen.json_parser import try_load_json
-from ai_gen.openai_client import OpenAIClient
+from ai_gen.ai_client import AIClient
 from ai_gen.prompts import build_category_assessment_prompt, build_consolidation_prompt
 from app import business_logic, export, visualization
 from app.schema import CATEGORIES_STRUCTURE, MATURITY_LEVELS
@@ -77,7 +77,7 @@ def get_schema():
 @app.post("/api/assess")
 def assess(req: AssessRequest):
     try:
-        client = OpenAIClient()
+        client = AIClient()
     except RuntimeError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -122,7 +122,7 @@ def assess(req: AssessRequest):
         )
 
         try:
-            raw = client.call_openai(prompt, max_tokens=1000, temperature=0.4)
+            raw = client.call_ai(prompt, max_tokens=1000, temperature=0.4)
             raw_ai_outputs[category] = raw
             parsed = try_load_json(raw)
             normalized = normalize_baseball_card(parsed)
@@ -172,7 +172,7 @@ def assess(req: AssessRequest):
 @app.post("/api/consolidate")
 def consolidate(req: ConsolidateRequest):
     try:
-        client = OpenAIClient()
+        client = AIClient()
     except RuntimeError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -180,7 +180,7 @@ def consolidate(req: ConsolidateRequest):
     prompt = build_consolidation_prompt(fragments)
 
     try:
-        raw = client.call_openai(prompt, max_tokens=800, temperature=0.4)
+        raw = client.call_ai(prompt, max_tokens=800, temperature=0.4)
         consolidated = try_load_json(raw)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Consolidation failed: {e}")
