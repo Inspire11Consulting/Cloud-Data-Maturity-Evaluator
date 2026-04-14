@@ -41,6 +41,9 @@ type ConsolidateResponse = {
 };
 
 export function MaturityTool() {
+  const sprintOrder = ['sprint1', 'sprint2', 'sprint3', 'sprint4'];
+  const yearOrder = ['year1', 'year2', 'year3'];
+
   const [clientProfile, setClientProfile] = useState({
     companyName: '',
     industry: '',
@@ -85,6 +88,16 @@ export function MaturityTool() {
   const getScoreLabel = (score: number) => {
     const labels = ['Beginner', 'Basic', 'Developing', 'Intermediate', 'Advanced'];
     return labels[score - 1] || 'Unknown';
+  };
+
+  const formatPeriodLabel = (period: string) => {
+    if (period.toLowerCase().startsWith('sprint')) {
+      return period.replace('sprint', 'Sprint ');
+    }
+    if (period.toLowerCase().startsWith('year')) {
+      return period.replace('year', 'Year ');
+    }
+    return period;
   };
 
   useEffect(() => {
@@ -525,35 +538,79 @@ export function MaturityTool() {
               })}
 
               {consolidated ? (
-                <div className="rounded-lg border border-gray-200 bg-white p-4">
-                  <div className="text-lg font-semibold text-gray-900 mb-3">Consolidated Roadmap</div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/40 p-5">
+                  <div className="mb-5 flex items-start justify-between gap-4">
                     <div>
-                      <div className="text-sm font-semibold text-gray-800 mb-2">8-Week Focus</div>
-                      {Object.entries(consolidated.focus_8w || {}).map(([sprint, items]) => (
-                        <div key={sprint} className="mb-2">
-                          <div className="text-xs font-semibold text-gray-600">{sprint}</div>
-                          <ul className="list-disc pl-5 text-sm text-gray-700">
-                            {(items || []).map((it, idx) => (
-                              <li key={idx}>{it}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                      <div className="text-lg font-semibold text-slate-900">Consolidated Roadmap</div>
+                      <p className="text-sm text-slate-600">Prioritized initiatives across near-term sprints and long-term outcomes.</p>
                     </div>
-                    <div>
-                      <div className="text-sm font-semibold text-gray-800 mb-2">3-Year Plan</div>
-                      {Object.entries(consolidated.plan_3y || {}).map(([year, items]) => (
-                        <div key={year} className="mb-2">
-                          <div className="text-xs font-semibold text-gray-600">{year}</div>
-                          <ul className="list-disc pl-5 text-sm text-gray-700">
-                            {(items || []).map((it, idx) => (
-                              <li key={idx}>{it}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                    <div className="rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-700">
+                      Strategy View
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <section className="rounded-lg border border-blue-100 bg-white p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div className="text-sm font-semibold text-blue-900">8-Week Focus</div>
+                        <div className="text-xs text-blue-700">Execution Timeline</div>
+                      </div>
+                      <div className="space-y-3">
+                        {sprintOrder.map((sprint) => {
+                          const items = consolidated.focus_8w?.[sprint] || [];
+                          return (
+                            <div key={sprint} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
+                                {formatPeriodLabel(sprint)}
+                              </div>
+                              {items.length ? (
+                                <ul className="space-y-1.5">
+                                  {items.map((it, idx) => (
+                                    <li key={idx} className="flex gap-2 text-sm leading-relaxed text-slate-700">
+                                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500" />
+                                      <span>{it}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-sm text-slate-500">No items available.</p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+
+                    <section className="rounded-lg border border-violet-100 bg-white p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div className="text-sm font-semibold text-violet-900">3-Year Plan</div>
+                        <div className="text-xs text-violet-700">Strategic Horizon</div>
+                      </div>
+                      <div className="space-y-3">
+                        {yearOrder.map((year) => {
+                          const items = consolidated.plan_3y?.[year] || [];
+                          return (
+                            <div key={year} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
+                                {formatPeriodLabel(year)}
+                              </div>
+                              {items.length ? (
+                                <ul className="space-y-1.5">
+                                  {items.map((it, idx) => (
+                                    <li key={idx} className="flex gap-2 text-sm leading-relaxed text-slate-700">
+                                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />
+                                      <span>{it}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-sm text-slate-500">No items available.</p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
                   </div>
                 </div>
               ) : (
