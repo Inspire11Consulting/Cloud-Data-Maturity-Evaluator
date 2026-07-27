@@ -8,9 +8,18 @@ A Streamlit app that lets a consultant score a client's cloud/data maturity acro
 
 ## Running it
 
+Two ways, both equivalent:
+
 ```bash
+# Option A: activate the venv, then run normally
+.venv\Scripts\activate
 python -m streamlit run main.py
+
+# Option B: call the venv's python directly, no activation
+.venv\Scripts\python.exe -m streamlit run main.py
 ```
+
+**Gotcha on this machine:** the system-wide `python` on PATH resolves to a broken Python 3.13 install (`C:\Program Files\Python313` — missing `Lib\encodings`, fails immediately with `ModuleNotFoundError: No module named 'encodings'`). If either command above fails with that error, the venv wasn't actually activated/used — check `Get-Command python` resolves inside `.venv`, not system Python. The project's `.venv` was built from Python 3.11, which works correctly.
 
 Requires a `.env` file (copy `.env_template`) with a real `OPENAI_API_KEY`. The app hard-stops (`st.stop()`) in [app/main.py](app/main.py) if the key is missing — this is intentional, not a bug to "fix" with a fallback.
 

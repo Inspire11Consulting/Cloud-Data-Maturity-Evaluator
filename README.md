@@ -44,12 +44,21 @@ A comprehensive Streamlit application for assessing organizational cloud and dat
    cd Cloud-Data-Maturity-Evaluator
    ```
 
-2. **Install dependencies**
+2. **Create a virtual environment (recommended)**
+   ```bash
+   python -m venv .venv
+   # Windows
+   .venv\Scripts\activate
+   # macOS/Linux
+   source .venv/bin/activate
+   ```
+
+3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Configure environment variables**
+4. **Configure environment variables**
    ```bash
    # Copy the template
    cp .env_template .env
@@ -60,11 +69,20 @@ A comprehensive Streamlit application for assessing organizational cloud and dat
 
 ## 🚀 Running the Application
 
+Activate your virtual environment, then run the app:
+
 ```bash
+.venv\Scripts\activate
 python -m streamlit run main.py
 ```
 
-The application will start and be available at `http://localhost:8501`
+The application will start and be available at `http://localhost:8501`.
+
+**Note on the port:** 8501 is Streamlit's default, not something specific to this app. If it's already in use (e.g. another Streamlit app is running), Streamlit automatically moves to the next free port (8502, 8503, ...) — check the terminal output for the actual URL. To pin a specific port instead:
+
+```bash
+python -m streamlit run main.py --server.port 8502
+```
 
 ## 📊 Maturity Assessment Categories
 
