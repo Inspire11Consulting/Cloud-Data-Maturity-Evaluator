@@ -60,14 +60,8 @@ A comprehensive Streamlit application for assessing organizational cloud and dat
 
 ## 🚀 Running the Application
 
-### Advanced Version (Recommended)
 ```bash
-python -m streamlit run "MaturityLevelEvaluation+AI7_v2.py"
-```
-
-### Basic Version
-```bash
-python -m streamlit run MaturityLevelEvaluation.py
+python -m streamlit run main.py
 ```
 
 The application will start and be available at `http://localhost:8501`
@@ -134,12 +128,22 @@ The application will start and be available at `http://localhost:8501`
 
 ```
 Cloud-Data-Maturity-Evaluator/
-├── MaturityLevelEvaluation.py              # Basic version
-├── MaturityLevelEvaluation+AI7_v2.py      # Advanced AI-powered version
-├── requirements.txt                        # Python dependencies
-├── .env_template                          # Environment variables template
-├── .gitignore                             # Git ignore rules
-└── README.md                              # This file
+├── main.py                    # Streamlit entry point (streamlit run main.py)
+├── app/
+│   ├── main.py                 # App orchestration: page setup, session state, main flow
+│   ├── ui_components.py        # Sidebar, maturity sliders, baseball card rendering
+│   ├── business_logic.py       # Score calculations, category inclusion logic
+│   ├── visualization.py        # Matplotlib roadmap diagrams (8-week, 3-year)
+│   └── export.py               # PowerPoint (.pptx) export
+├── ai_gen/
+│   ├── openai_client.py        # OpenAI API client wrapper
+│   ├── prompts.py               # Prompt templates for assessments & consolidation
+│   ├── json_parser.py           # Robust JSON parsing with fallbacks for model output
+│   └── data_normalizer.py       # Normalizes AI JSON into executive/technical cards
+├── requirements.txt            # Python dependencies
+├── .env_template                # Environment variables template
+├── .gitignore                   # Git ignore rules
+└── README.md                    # This file
 ```
 
 ## 🔐 Security
@@ -185,7 +189,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 **"streamlit: command not found"**
 ```bash
 # Use Python module syntax instead
-python -m streamlit run "MaturityLevelEvaluation+AI7_v2.py"
+python -m streamlit run main.py
 ```
 
 **"OpenAI API key not found"**
